@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Finance</title>
+</head>
+<body>
+    <!-- Sidebar - Barra da esquerda -->
+    <div class="sidebar">
+    <h1><span>Fin</span>ance</h1>
+    <nav>
+        <a href="#" data-page="dashboard" class="active"><span class="icon">📊</span> Dashboard</a>
+        <a href="#" data-page="cartao"><span class="icon">💳</span> Cartão</a>
+        <a href="#" data-page="gastos"><span class="icon">📉</span> Gastos</a>
+        <a href="#" data-page="metas"><span class="icon">🎯</span> Metas</a>
+        <a href="#" data-page="relatorios"><span class="icon">📈</span> Relatórios</a>
+    </nav>
+    </div>
+    <!-- Main conteúdo - Todo o conteudo -->
+    <div class="main">
+    
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page">
+        <div class="container-wide">
+        <div class="page-header">  <!-- Cabeçalho do dash -->
+            <h2>Dashboard</h2> 
+            <p id="dash-subtitle"></p>
+        </div>
+        <div class="dash-grid"> <!-- Parte de baixo do cabeçalho do dash -->
+            <div>
+            <!-- Income Section - Parte de cima do dash -->
+            <div class="card card-sm">
+                <div class="page-header-row" style="margin-bottom:16px">
+                <span class="card-title" style="margin-bottom:0">💰 Renda do Mês</span>
+                <button class="link-btn" onclick="openModal('extra-modal')">+ Renda Extra</button>
+                </div>
+                <div class="sep-row">
+                <span class="label">Salário Fixo</span>
+                <div id="salary-display">
+                    <button class="link-btn text-yellow" onclick="startEditSalary()" id="salary-btn">Definir salário</button>
+                </div>
+                <div id="salary-edit" class="inline-edit hidden">
+                    <input type="number" class="input" id="salary-input" step="0.01" placeholder="Valor">
+                    <button class="btn btn-ghost btn-sm" onclick="saveSalary()">OK</button>
+                </div>
+                </div>
+                <div id="extra-incomes-list"></div>
+                <div class="sep-row" style="border:none;padding-top:12px;margin-top:8px">
+                <span class="label" style="font-size:0.75rem">Total Renda</span>
+                <span class="val" id="total-income" style="font-weight:700">R$ 0,00</span>
+                </div>
+                <div class="sep-row" style="border:none;padding-top:4px">
+                <span class="label" style="font-size:0.75rem">Saldo</span>
+                <span class="val" id="saldo" style="font-weight:700">R$ 0,00</span>
+                </div>
+            </div>
+            <!-- Summary Cards, bloco de total gasto, etc. - Parte do meio do dash -->
+            <div class="summary-grid">
+                <div class="card card-sm summary-card">
+                <div class="top-row"><span class="label">Total Gastos</span><span class="icon-badge" style="background:hsla(160,84%,44%,0.2)">💼</span></div>
+                <div class="value" id="dash-total-gastos">R$ 0,00</div>
+                </div>
+                <div class="card card-sm summary-card">
+                <div class="top-row"><span class="label">Fatura Cartão</span><span class="icon-badge" style="background:hsla(220,90%,56%,0.2)">💳</span></div>
+                <div class="value" id="dash-card-total">R$ 0,00</div>
+                </div>
+                <div class="card card-sm summary-card">
+                <div class="top-row"><span class="label">Gastos Gerais</span><span class="icon-badge" style="background:hsla(330,85%,60%,0.2)">📉</span></div>
+                <div class="value" id="dash-expenses-total">R$ 0,00</div>
+                </div>
+            </div>
+            <!-- Transações Recentes - Parte de baixo do dash-->
+            <div class="card">
+                <div class="card-title">Transações Recentes</div>
+                <div id="recent-transactions"></div>
+            </div>
+            </div>
+            <!-- Calendar - Calendário a esquerda -->
+            <div>
+            <div class="card calendar" id="calendar-container"></div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- CARTÃO -->
+    <div id="page-cartao" class="page hidden">
+        <div class="container">
+        <div class="page-header"> <!-- CARTÃO - Parte de cima da área cartão -->
+            <h2>Cartão</h2>
+            <p>Gerencie os gastos do seu cartão de crédito</p>
+        </div>
+        <div class="card"> <!-- CARTÃO - Parte do meio da área cartão -->
+            <div class="page-header-row">
+            <div style="display:flex;align-items:center;gap:12px">
+                <span class="icon-badge" style="background:hsla(220,90%,56%,0.2);font-size:1.5rem">💳</span>
+                <div>
+                <p style="font-size:0.7rem;color:var(--muted-fg);text-transform:uppercase;letter-spacing:0.05em" id="card-month-label"></p>
+                <p style="font-size:1.8rem;font-weight:700" id="card-total-value">R$ 0,00</p>
+                </div>
+            </div>
+            <button class="btn btn-blue" onclick="openModal('card-modal')">+ Adicionar Gasto</button>
+            </div>
+        </div>
+        <div class="card"> <!-- CARTÃO - Parte de baixo da área cartão -->
+            <div class="card-title" id="card-list-title"></div>
+            <div id="card-expenses-list"></div>
+        </div>
+        </div>
+    </div>
+
+    <!-- GASTOS -->
+    <div id="page-gastos" class="page hidden">
+        <div class="container">
+        <div class="page-header"> <!-- GASTOS - Parte de cima da área gastos -->
+            <h2>Gastos</h2>
+            <p>Controle seus gastos gerais do mês</p>
+        </div>
+        <div class="card"> <!-- GASTOS - Parte do meio da área gastos -->
+            <div class="page-header-row">
+            <div style="display:flex;align-items:center;gap:12px">
+                <span class="icon-badge" style="background:hsla(330,85%,60%,0.2);font-size:1.5rem">📉</span>
+                <div>
+                <p style="font-size:0.7rem;color:var(--muted-fg);text-transform:uppercase;letter-spacing:0.05em" id="expenses-month-label"></p>
+                <p style="font-size:1.8rem;font-weight:700" id="expenses-total-value">R$ 0,00</p>
+                </div>
+            </div>
+            <button class="btn btn-pink" onclick="openModal('expenses-modal')">+ Adicionar Gasto</button>
+            </div>
+        </div>
+        <div class="card"> <!-- GASTOS - Parte de baixo da área gastos -->
+            <div class="card-title" id="expenses-list-title"></div>
+            <div id="general-expenses-list"></div>
+        </div>
+        </div>
+    </div>
+
+    <!-- METAS -->
+    <div id="page-metas" class="page hidden">
+        <div class="container">
+        <div class="page-header page-header-row"> <!-- METAS - Parte de cima da área metas -->
+            <div>
+            <h2>Metas</h2>
+            <p>Defina objetivos e receba sugestões para alcançá-los</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('goal-modal')">+ Nova Meta</button>
+        </div>
+        <div id="goals-list"></div>  <!-- METAS - Parte de baixo da área metas -->
+        </div>
+    </div>
+
+    <!-- RELATÓRIOS -->
+    <div id="page-relatorios" class="page hidden">
+        <div class="container-wide"> <!-- RELATÓRIOS - Parte de cima da área relatórios -->
+        <div class="page-header">
+            <h2>Relatórios</h2>
+            <p>Visão consolidada de todos os meses</p>
+        </div>
+        <div id="reports-content"></div>
+        </div>
+    </div>
+    </div>
+
+    <!-- MODALS -->
+    <!-- MODALS - Começa modal renda extra-->
+    <div class="modal-overlay" id="extra-modal"> 
+    <div class="modal">
+        <button class="close-btn" onclick="closeModal('extra-modal')">✕</button>
+        <h3>Adicionar Renda Extra</h3>
+        <div class="form-group"><input class="input" id="extra-name" placeholder="Descrição (ex: Freelance)"></div>
+        <div class="form-group"><input class="input" id="extra-value" type="number" step="0.01" placeholder="Valor"></div>
+        <button class="btn btn-primary btn-full" onclick="addExtraIncome()">Adicionar</button>
+    </div>
+    </div>
+    <!-- MODALS - Termina modal renda extra-->
+
+    <!-- MODALS - Começa modal novo gasto cartão-->
+    <div class="modal-overlay" id="card-modal">
+    <div class="modal">
+        <button class="close-btn" onclick="closeModal('card-modal')">✕</button>
+        <h3>Novo Gasto no Cartão</h3>
+        <div class="form-group"><input class="input" id="card-name" placeholder="Nome do gasto"></div>
+        <div class="form-group"><input class="input" id="card-value" type="number" step="0.01" placeholder="Valor (R$)"></div>
+        <div class="form-group">
+        <select class="select" id="card-category">
+            <option>Alimentação</option><option>Compras</option><option>Assinaturas</option><option>Transporte</option><option>Lazer</option><option>Saúde</option><option>Outros</option>
+        </select>
+        </div>
+        <button class="btn btn-blue btn-full" onclick="addCardExpense()">Adicionar</button>
+    </div>
+    </div>
+    <!-- MODALS - Termina modal novo gasto cartão-->
+
+    <!-- MODALS - Começa modal gastos-->
+    <div class="modal-overlay" id="expenses-modal"> Novo gastos 
+    <div class="modal">
+        <button class="close-btn" onclick="closeModal('expenses-modal')">✕</button>
+        <h3>Novo Gasto</h3>
+        <div class="form-group"><input class="input" id="exp-name" placeholder="Nome do gasto"></div>
+        <div class="form-group"><input class="input" id="exp-value" type="number" step="0.01" placeholder="Valor (R$)"></div>
+        <div class="form-group">
+        <select class="select" id="exp-category">
+            <option>Aluguel</option><option>Alimentação</option><option>Transporte</option><option>Educação</option><option>Saúde</option><option>Lazer</option><option>Contas</option><option>Outros</option>
+        </select>
+        </div>
+        <button class="btn btn-pink btn-full" onclick="addGeneralExpense()">Adicionar</button>
+    </div>
+    </div>
+    <!-- MODALS - Termina modal gastos-->
+
+    <!-- MODALS - Começa modal metas-->
+    <div class="modal-overlay" id="goal-modal">
+    <div class="modal">
+        <button class="close-btn" onclick="closeModal('goal-modal')">✕</button>
+        <h3>Criar Meta</h3>
+        <div class="form-group"><input class="input" id="goal-title" placeholder="Ex: Juntar R$5.000 para emergência"></div>
+        <div class="form-group"><textarea class="textarea" id="goal-notes" placeholder="Observações (opcional)"></textarea></div>
+        <button class="btn btn-primary btn-full" onclick="addGoal()">✨ Criar e gerar sugestões</button>
+    </div>
+    </div>
+    <!-- MODALS - Termina modal metas-->
+
+    <script src="script.js"> </script>
+</body>
+</html>
